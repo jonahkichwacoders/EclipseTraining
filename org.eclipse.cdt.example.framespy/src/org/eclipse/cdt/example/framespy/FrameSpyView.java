@@ -56,7 +56,7 @@ public class FrameSpyView extends ViewPart {
 		Menu menu = fMenuManager.createContextMenu(fLogText);
 		fLogText.setMenu(menu);
 		getViewSite().registerContextMenu(fMenuManager, null);
-		
+
 		// Display the new state to the user
 		boolean toggledState = getToggledState();
 		fLogText.setText(Boolean.toString(toggledState));
@@ -70,7 +70,7 @@ public class FrameSpyView extends ViewPart {
 	public void setFocus() {
 		fLogText.setFocus();
 	}
-	
+
 	@Override
 	public void dispose() {
 		super.dispose();
@@ -93,7 +93,7 @@ public class FrameSpyView extends ViewPart {
 			// next time the view is opened
 			IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
 			preferences.put(TOGGLE_STATE_PREF_KEY, Boolean.toString(newState));
-						
+
 			// Create the polling job if the spy is enabled
 			if (newState) {
 				startPollingJob();
@@ -126,26 +126,26 @@ public class FrameSpyView extends ViewPart {
 				}
 
 				doWork();
-				
+
 				schedule();
 
 				return Status.OK_STATUS;
 			}
-			
+
 			private void doWork() {
 				// Get the debug selection to know what the user is looking at in the Debug view
 				IAdaptable context = DebugUITools.getDebugContext();
 				if (context == null) {
 					return;
 				}
-				
+
 				// Extract the data model context to use with the DSF services
-				IDMContext dmcontext = context.getAdapter(IDMContext.class);
+				IDMContext dmcontext = (IDMContext) context.getAdapter(IDMContext.class);
 				if (dmcontext == null) {
 					// Not dealing with a DSF session
 					return;
 				}
-				
+
 				// Extract DSF session id from the DM context
 				String sessionId = dmcontext.getSessionId();
 				// Get the full DSF session to have access to the DSF executor
@@ -154,7 +154,7 @@ public class FrameSpyView extends ViewPart {
 					// It could be that this session is no longer active
 					return;
 				}
-				
+
 				// Get Stack service using a DSF services tracker object
 				DsfServicesTracker tracker = new DsfServicesTracker(Activator.getBundleContext(), sessionId);
 				IStack stackService = tracker.getService(IStack.class);
@@ -188,11 +188,11 @@ public class FrameSpyView extends ViewPart {
 												frameData.getFunction() + ":" + frameData.getLine() + "\n" +
 												fLogText.getText());
 									}
-								});								
+								});
 							}
 						});
 					}
-				});	
+				});
 			}
 		};
 		fPollingJob.schedule();
